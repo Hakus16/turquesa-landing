@@ -1,18 +1,31 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { PackageOpen } from 'lucide-react';
-import { PRODUCTS } from '../../data/products';
 import type { CategoryId, Product } from '../../types/product';
+import { productService } from '../../services/productService';
 import { CategoryFilter } from './CategoryFilter';
 import { ProductCard } from './ProductCard';
 import { OrderModal } from './OrderModal';
 
-export const CatalogSection: React.FC = () => {
+interface CatalogSectionProps {
+  products?: Product[];
+}
+
+export const CatalogSection: React.FC<CatalogSectionProps> = ({ products: initialProducts }) => {
+  const [productsList, setProductsList] = useState<Product[]>(initialProducts || []);
   const [activeCategory, setActiveCategory] = useState<CategoryId>('todos');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
+  useEffect(() => {
+    if (initialProducts) {
+      setProductsList(initialProducts);
+    } else {
+      productService.getAll().then((data) => setProductsList(data));
+    }
+  }, [initialProducts]);
+
   const filteredProducts = useMemo(() => {
-    return PRODUCTS.filter((product) => {
+    return productsList.filter((product) => {
       const matchesCategory =
         activeCategory === 'todos' || product.category === activeCategory;
 
@@ -24,7 +37,7 @@ export const CatalogSection: React.FC = () => {
 
       return matchesCategory && matchesSearch;
     });
-  }, [activeCategory, searchQuery]);
+  }, [productsList, activeCategory, searchQuery]);
 
   return (
     <section id="catalogo" className="py-20 bg-[#FAF7F2]">

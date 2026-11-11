@@ -1,5 +1,5 @@
 import React from 'react';
-import { Sparkles, MessageCircle } from 'lucide-react';
+import { Sparkles, MessageCircle, AlertCircle } from 'lucide-react';
 import type { Product } from '../../types/product';
 import { formatCOP } from '../../utils/formatPrice';
 import { createProductOrderWhatsAppLink } from '../../utils/whatsappLink';
@@ -10,24 +10,34 @@ interface ProductCardProps {
 }
 
 export const ProductCard: React.FC<ProductCardProps> = ({ product, onOpenModal }) => {
+  const isAvailable = product.inStock ?? true;
+
   return (
-    <div className="group bg-[#F4EFE6] rounded-2xl overflow-hidden border border-[#E4D9C9] shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between hover:-translate-y-1">
+    <div className={`group bg-[#F4EFE6] rounded-2xl overflow-hidden border border-[#E4D9C9] shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between hover:-translate-y-1 ${
+      !isAvailable ? 'opacity-85' : ''
+    }`}>
       
       {/* Image Container */}
       <div className="relative aspect-[4/3] bg-[#E8DEC8] overflow-hidden">
         <img
           src={product.image}
           alt={product.name}
-          className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
+          className={`w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500 ${
+            !isAvailable ? 'grayscale-[30%]' : ''
+          }`}
           loading="lazy"
         />
 
-        {/* Badge */}
-        {product.badge && (
+        {/* Badges */}
+        {!isAvailable ? (
+          <span className="absolute top-2.5 left-2.5 sm:top-3 sm:left-3 bg-[#2D2723]/90 text-white backdrop-blur-sm px-2.5 py-0.5 sm:py-1 rounded-full text-[9px] sm:text-[10px] font-bold uppercase tracking-wider shadow-sm">
+            Agotado temporalmente
+          </span>
+        ) : product.badge ? (
           <span className="absolute top-2.5 left-2.5 sm:top-3 sm:left-3 bg-white/95 backdrop-blur-sm px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-[#0D9488] shadow-sm border border-white/60">
             {product.badge}
           </span>
-        )}
+        ) : null}
 
         {/* Size Badge */}
         {product.size && (
@@ -68,15 +78,25 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onOpenModal }
               <span className="truncate">Personalizar</span>
             </button>
 
-            <a
-              href={createProductOrderWhatsAppLink({ product })}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full py-2.5 px-2 sm:px-3 rounded-xl bg-[#0D9488] text-white text-[11px] sm:text-xs font-semibold hover:bg-[#0F766E] transition-colors flex items-center justify-center gap-1 shadow-sm active:scale-95"
-            >
-              <MessageCircle className="w-3.5 h-3.5 fill-white flex-shrink-0" />
-              <span className="truncate">Pedir Ya</span>
-            </a>
+            {isAvailable ? (
+              <a
+                href={createProductOrderWhatsAppLink({ product })}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full py-2.5 px-2 sm:px-3 rounded-xl bg-[#0D9488] text-white text-[11px] sm:text-xs font-semibold hover:bg-[#0F766E] transition-colors flex items-center justify-center gap-1 shadow-sm active:scale-95"
+              >
+                <MessageCircle className="w-3.5 h-3.5 fill-white flex-shrink-0" />
+                <span className="truncate">Pedir Ya</span>
+              </a>
+            ) : (
+              <button
+                disabled
+                className="w-full py-2.5 px-2 sm:px-3 rounded-xl bg-stone-200 text-stone-500 text-[11px] sm:text-xs font-semibold flex items-center justify-center gap-1 cursor-not-allowed"
+              >
+                <AlertCircle className="w-3.5 h-3.5" />
+                <span className="truncate">Agotado</span>
+              </button>
+            )}
           </div>
         </div>
 
