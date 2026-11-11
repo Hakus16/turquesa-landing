@@ -25,7 +25,7 @@ interface AdminPanelProps {
   onProductsChanged?: () => void;
 }
 
-const DEFAULT_ADMIN_PASS = '@Gio787*';
+const ADMIN_PASSWORD = '@Gio787*';
 
 export const AdminPanel: React.FC<AdminPanelProps> = ({ onExit, onProductsChanged }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
@@ -64,12 +64,12 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onExit, onProductsChange
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    if (passwordInput.trim() === DEFAULT_ADMIN_PASS || passwordInput.trim().length >= 4) {
+    if (passwordInput.trim() === ADMIN_PASSWORD) {
       setIsAuthenticated(true);
       sessionStorage.setItem('turquesa_admin_logged', 'true');
       setLoginError('');
     } else {
-      setLoginError('Contraseña incorrecta.');
+      setLoginError('Contraseña incorrecta. Por favor intenta de nuevo.');
     }
   };
 
@@ -137,8 +137,9 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onExit, onProductsChange
 
           <form onSubmit={handleLogin} className="space-y-4">
             {loginError && (
-              <div className="text-xs text-red-600 bg-red-50 border border-red-200 p-2.5 rounded-xl text-center">
-                {loginError}
+              <div className="flex items-center justify-center gap-2 text-xs font-medium text-red-600 bg-red-50 border border-red-200 py-2.5 px-3 rounded-xl text-center animate-in fade-in duration-200">
+                <AlertTriangle className="w-4 h-4 text-red-500 flex-shrink-0" />
+                <span>{loginError}</span>
               </div>
             )}
             <div>
@@ -147,16 +148,23 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onExit, onProductsChange
               </label>
               <input
                 type="password"
-                placeholder="Clave"
+                placeholder="Ingresa la contraseña..."
                 value={passwordInput}
-                onChange={(e) => setPasswordInput(e.target.value)}
-                className="w-full px-4 py-2.5 rounded-xl bg-white border border-[#E4D9C9] text-sm text-[#2D2723] focus:outline-none focus:border-[#0D9488]"
+                onChange={(e) => {
+                  setPasswordInput(e.target.value);
+                  if (loginError) setLoginError('');
+                }}
+                className={`w-full px-4 py-2.5 rounded-xl bg-white border text-sm text-[#2D2723] focus:outline-none transition-colors ${
+                  loginError
+                    ? 'border-red-400 focus:border-red-500 ring-1 ring-red-400'
+                    : 'border-[#E4D9C9] focus:border-[#0D9488]'
+                }`}
                 autoFocus
               />
             </div>
             <button
               type="submit"
-              className="w-full py-3 rounded-full bg-[#0D9488] hover:bg-[#0F766E] text-white text-sm font-semibold shadow transition-all active:scale-95"
+              className="w-full py-3 rounded-full bg-[#0D9488] hover:bg-[#0F766E] text-white text-sm font-semibold shadow transition-all active:scale-95 cursor-pointer"
             >
               Ingresar al Panel
             </button>
