@@ -1,8 +1,10 @@
-import React from 'react';
-import { Sparkles, MessageCircle, AlertCircle } from 'lucide-react';
+import React, { useState } from 'react';
+import { Sparkles, ShoppingBag, AlertCircle, Check } from 'lucide-react';
 import type { Product } from '../../types/product';
 import { formatCOP } from '../../utils/formatPrice';
-import { createProductOrderWhatsAppLink } from '../../utils/whatsappLink';
+import { useCart } from '../../context/CartContext';
+import { AROMAS } from '../../data/aromas';
+import { CANDLE_COLORS } from '../../data/colors';
 
 interface ProductCardProps {
   product: Product;
@@ -11,6 +13,22 @@ interface ProductCardProps {
 
 export const ProductCard: React.FC<ProductCardProps> = ({ product, onOpenModal }) => {
   const isAvailable = product.inStock ?? true;
+  const { addItem, openCart } = useCart();
+  const [isAdded, setIsAdded] = useState(false);
+
+  const handleQuickAddToCart = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    addItem({
+      product,
+      aroma: AROMAS[0].name,
+      color: CANDLE_COLORS[0].name,
+      quantity: 1,
+      unitPrice: product.price,
+    });
+    setIsAdded(true);
+    openCart();
+    setTimeout(() => setIsAdded(false), 1200);
+  };
 
   return (
     <div className={`group bg-[#F4EFE6] rounded-2xl overflow-hidden border border-[#E4D9C9] shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between hover:-translate-y-1 ${
@@ -79,15 +97,27 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onOpenModal }
             </button>
 
             {isAvailable ? (
-              <a
-                href={createProductOrderWhatsAppLink({ product })}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full py-2.5 px-2 sm:px-3 rounded-xl bg-[#0D9488] text-white text-[11px] sm:text-xs font-semibold hover:bg-[#0F766E] transition-colors flex items-center justify-center gap-1 shadow-sm active:scale-95"
+              <button
+                type="button"
+                onClick={handleQuickAddToCart}
+                disabled={isAdded}
+                className="w-full py-2.5 px-2 sm:px-3 rounded-xl bg-[#0D9488] text-white text-[11px] sm:text-xs font-semibold hover:bg-[#0F766E] transition-all flex items-center justify-center gap-1 shadow-sm active:scale-95 cursor-pointer disabled:opacity-85"
+                title="Agregar al carrito de compras"
+                aria-label={`Agregar ${product.name} al carrito`}
               >
-                <MessageCircle className="w-3.5 h-3.5 fill-white flex-shrink-0" />
-                <span className="truncate">Pedir Ya</span>
-              </a>
+                {isAdded ? (
+                  <>
+                    <Check className="w-3.5 h-3.5 text-white animate-in zoom-in-50" />
+                    <span className="truncate">¡Agregado!</span>
+                  </>
+                ) : (
+                  <>
+                    <ShoppingBag className="w-3.5 h-3.5 flex-shrink-0" />
+                    <span className="hidden sm:inline truncate">Agregar al Carrito</span>
+                    <span className="sm:hidden truncate">+ Carrito</span>
+                  </>
+                )}
+              </button>
             ) : (
               <button
                 disabled

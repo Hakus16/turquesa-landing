@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import { Sparkles, Check, MessageCircle } from 'lucide-react';
+import { Sparkles, Check, ArrowRight } from 'lucide-react';
 import { AROMAS } from '../../data/aromas';
 import type { Aroma } from '../../types/product';
-import { createGeneralWhatsAppLink } from '../../utils/whatsappLink';
 
 interface AromasSectionProps {
   onSelectAroma?: (aroma: Aroma) => void;
@@ -75,18 +74,16 @@ export const AromasSection: React.FC<AromasSectionProps> = ({ onSelectAroma }) =
             {selectedAroma.description}
           </p>
 
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4 pt-5 sm:pt-6 border-t border-[#E4D9C9]">
-            <span className="text-xs text-[#7A7065] text-center sm:text-left font-light">
-              Disponible para combinar con cualquiera de los diseños del catálogo.
+          <div className="pt-5 sm:pt-6 border-t border-[#E4D9C9] flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
+            <span className="text-xs text-[#7A7065] font-light">
+              ✨ Disponible para personalizar cualquiera de los diseños de velas de nuestro catálogo.
             </span>
             <a
-              href={createGeneralWhatsAppLink(`¡Hola! Me encantó la esencia de *${selectedAroma.name}* (${selectedAroma.mood}). ¿Qué velas me recomiendan con este aroma?`)}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2 px-5 py-3 sm:py-2.5 rounded-full bg-[#0D9488] text-white text-xs sm:text-sm font-medium hover:bg-[#0F766E] transition-colors shadow-sm active:scale-95 w-full sm:w-auto"
+              href="#catalogo"
+              className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#0D9488] hover:text-[#0F766E] transition-colors"
             >
-              <MessageCircle className="w-4 h-4 flex-shrink-0" />
-              <span>Pedir con esencia {selectedAroma.name}</span>
+              <span>Explorar catálogo</span>
+              <ArrowRight className="w-3.5 h-3.5" />
             </a>
           </div>
 
