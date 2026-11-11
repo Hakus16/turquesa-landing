@@ -80,7 +80,7 @@ VALUES
   ('vasito', 'Vasito Personalizado', NULL, 15000, 'vasos', '/images/vasito.png', 'Vela vertida en vaso de vidrio reutilizable con color y esencia a elección. (Sujeto a disponibilidad).', NULL, true),
   ('mandarina-grande', 'Mandarina Grande', '8 cm', 17000, 'frutales', '/images/mandarina-grande.png', 'Tamaño generoso con textura botánica hiperrealista. Un punto focal alegre y vibrante en cualquier habitación.', NULL, true),
   ('postres', 'Postres Gourmet en Vaso', NULL, 20000, 'vasos', '/images/postres.png', 'Vaso relleno de cera con cera batida decorada con corazones y tabletas de chocolate artesanales. (Sujeto a disponibilidad).', NULL, true),
-  ('arcos-set', 'Arcos Escandinavos (Set x3)', '8 cm - 7 cm - 6 cm', 20000, 'sets', '/images/arcos.png', 'Trilogía de arcos acanalados en tres alturas armoniosas. Inspiración nórdica y moderna para repisas y mesas de centro.', NULL, true)
+  ('arcos-set', 'Arcos (Set x3)', '8 cm - 7 cm - 6 cm', 20000, 'sets', '/images/arcos.png', 'Trilogía de arcos acanalados en tres alturas armoniosas. Inspiración nórdica y moderna para repisas y mesas de centro.', NULL, true)
 ON CONFLICT (id) DO UPDATE SET
   name = EXCLUDED.name,
   size = EXCLUDED.size,

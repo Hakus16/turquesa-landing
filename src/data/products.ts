@@ -120,7 +120,7 @@ export const PRODUCTS: Product[] = [
   },
   {
     id: 'arcos-set',
-    name: 'Arcos  (Set x3)',
+    name: 'Arcos (Set x3)',
     size: '8 cm - 7 cm - 6 cm',
     price: 20000,
     category: 'sets',
