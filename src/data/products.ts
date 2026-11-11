@@ -82,7 +82,7 @@ export const PRODUCTS: Product[] = [
   },
   {
     id: 'cuadrado-corazones',
-    name: 'Cuadrado de Corazones (Bubble)',
+    name: 'Cuadrado de Corazones',
     size: '5 cm x 5 cm',
     price: 15000,
     category: 'geometricas',

@@ -25,7 +25,7 @@ interface AdminPanelProps {
   onProductsChanged?: () => void;
 }
 
-const DEFAULT_ADMIN_PASS = 'turquesa2026';
+const DEFAULT_ADMIN_PASS = '@Gio787*';
 
 export const AdminPanel: React.FC<AdminPanelProps> = ({ onExit, onProductsChanged }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
@@ -69,7 +69,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onExit, onProductsChange
       sessionStorage.setItem('turquesa_admin_logged', 'true');
       setLoginError('');
     } else {
-      setLoginError('Contraseña incorrecta. Por defecto es: turquesa2026');
+      setLoginError('Contraseña incorrecta.');
     }
   };
 
@@ -147,7 +147,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onExit, onProductsChange
               </label>
               <input
                 type="password"
-                placeholder="Clave (por defecto: turquesa2026)"
+                placeholder="Clave"
                 value={passwordInput}
                 onChange={(e) => setPasswordInput(e.target.value)}
                 className="w-full px-4 py-2.5 rounded-xl bg-white border border-[#E4D9C9] text-sm text-[#2D2723] focus:outline-none focus:border-[#0D9488]"

@@ -1,6 +1,5 @@
 -- ========================================================
 -- TURQUESA: CONFIGURACIÓN INICIAL DE BASE DE DATOS SUPABASE
--- Copia y pega este script en el "SQL Editor" de tu proyecto en Supabase
 -- ========================================================
 
 -- 1. Crear tabla de productos
@@ -17,46 +16,57 @@ CREATE TABLE IF NOT EXISTS public.products (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 
--- 2. Habilitar Row Level Security (Seguridad de filas)
+-- 2. Habilitar Seguridad por Fila (RLS)
 ALTER TABLE public.products ENABLE ROW LEVEL SECURITY;
 
--- 3. Políticas de acceso a productos:
--- Permitir a cualquier visitante leer productos
+-- 3. Políticas de acceso a la tabla products
+DROP POLICY IF EXISTS "Permitir lectura publica de productos" ON public.products;
 CREATE POLICY "Permitir lectura publica de productos" 
 ON public.products FOR SELECT 
 USING (true);
 
--- Permitir insertar productos
+DROP POLICY IF EXISTS "Permitir insercion de productos" ON public.products;
 CREATE POLICY "Permitir insercion de productos" 
 ON public.products FOR INSERT 
 WITH CHECK (true);
 
--- Permitir actualizar productos
+DROP POLICY IF EXISTS "Permitir actualizacion de productos" ON public.products;
 CREATE POLICY "Permitir actualizacion de productos" 
 ON public.products FOR UPDATE 
 USING (true);
 
--- Permitir eliminar productos
+DROP POLICY IF EXISTS "Permitir eliminacion de productos" ON public.products;
 CREATE POLICY "Permitir eliminacion de productos" 
 ON public.products FOR DELETE 
 USING (true);
 
--- 4. Crear bucket publico para imagenes de productos
+-- 4. Crear bucket de almacenamiento para fotos
 INSERT INTO storage.buckets (id, name, public) 
 VALUES ('product-images', 'product-images', true)
-ON CONFLICT (id) DO NOTHING;
+ON CONFLICT (id) DO UPDATE SET public = true;
 
--- Politica para permitir que cualquiera vea las imagenes
-CREATE POLICY "Imagenes publicas para lectura"
-ON storage.objects FOR SELECT
+-- Políticas de Storage para fotos
+DROP POLICY IF EXISTS "Imagenes publicas para lectura" ON storage.objects;
+CREATE POLICY "Imagenes publicas para lectura" 
+ON storage.objects FOR SELECT 
 USING (bucket_id = 'product-images');
 
--- Politica para permitir subir imagenes
-CREATE POLICY "Permitir subida de imagenes"
-ON storage.objects FOR INSERT
+DROP POLICY IF EXISTS "Permitir subida de imagenes" ON storage.objects;
+CREATE POLICY "Permitir subida de imagenes" 
+ON storage.objects FOR INSERT 
 WITH CHECK (bucket_id = 'product-images');
 
--- 5. Poblar el catalogo inicial con los 12 productos del catalogo
+DROP POLICY IF EXISTS "Permitir actualizar imagenes" ON storage.objects;
+CREATE POLICY "Permitir actualizar imagenes" 
+ON storage.objects FOR UPDATE 
+USING (bucket_id = 'product-images');
+
+DROP POLICY IF EXISTS "Permitir eliminar imagenes" ON storage.objects;
+CREATE POLICY "Permitir eliminar imagenes" 
+ON storage.objects FOR DELETE 
+USING (bucket_id = 'product-images');
+
+-- 5. Cargar catálogo inicial de 12 productos
 INSERT INTO public.products (id, name, size, price, category, image, description, badge, in_stock)
 VALUES
   ('margaritas', 'Margaritas', 'Pequeñas', 3000, 'flores', '/images/margaritas.png', 'Velas individuales en forma de margarita con centro detallado. Ideales para recuerdos y detalles especiales.', 'Más accesible', true),
@@ -71,4 +81,12 @@ VALUES
   ('mandarina-grande', 'Mandarina Grande', '8 cm', 17000, 'frutales', '/images/mandarina-grande.png', 'Tamaño generoso con textura botánica hiperrealista. Un punto focal alegre y vibrante en cualquier habitación.', NULL, true),
   ('postres', 'Postres Gourmet en Vaso', NULL, 20000, 'vasos', '/images/postres.png', 'Vaso relleno de cera con cera batida decorada con corazones y tabletas de chocolate artesanales. (Sujeto a disponibilidad).', 'Edición Gourmet', true),
   ('arcos-set', 'Arcos Escandinavos (Set x3)', '8 cm - 7 cm - 6 cm', 20000, 'sets', '/images/arcos.png', 'Trilogía de arcos acanalados en tres alturas armoniosas. Inspiración nórdica y moderna para repisas y mesas de centro.', 'Set Completo', true)
-ON CONFLICT (id) DO NOTHING;
+ON CONFLICT (id) DO UPDATE SET
+  name = EXCLUDED.name,
+  size = EXCLUDED.size,
+  price = EXCLUDED.price,
+  category = EXCLUDED.category,
+  image = EXCLUDED.image,
+  description = EXCLUDED.description,
+  badge = EXCLUDED.badge,
+  in_stock = EXCLUDED.in_stock;

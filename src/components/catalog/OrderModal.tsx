@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { X, Sparkles, Plus, Minus, MessageCircle, ShieldCheck } from 'lucide-react';
+import { X, Sparkles, Plus, Minus, MessageCircle, ShieldCheck, ShoppingBag, Check } from 'lucide-react';
 import type { Product } from '../../types/product';
 import { AROMAS } from '../../data/aromas';
 import { CANDLE_COLORS } from '../../data/colors';
 import { formatCOP } from '../../utils/formatPrice';
 import { createProductOrderWhatsAppLink } from '../../utils/whatsappLink';
+import { useCart } from '../../context/CartContext';
 
 interface OrderModalProps {
   product: Product;
@@ -12,11 +13,13 @@ interface OrderModalProps {
 }
 
 export const OrderModal: React.FC<OrderModalProps> = ({ product, onClose }) => {
+  const { addItem, openCart } = useCart();
   const [selectedAroma, setSelectedAroma] = useState<string>(AROMAS[0].name);
   const [selectedColor, setSelectedColor] = useState<string>(CANDLE_COLORS[0].name);
   const [customColor, setCustomColor] = useState<string>('');
   const [quantity, setQuantity] = useState<number>(1);
   const [notes, setNotes] = useState<string>('');
+  const [isAdded, setIsAdded] = useState<boolean>(false);
 
   // Lock body scroll cleanly and handle Escape key
   useEffect(() => {
@@ -41,6 +44,22 @@ export const OrderModal: React.FC<OrderModalProps> = ({ product, onClose }) => {
   const depositPrice = totalPrice * 0.5;
 
   const activeColor = customColor.trim() ? customColor : selectedColor;
+
+  const handleAddToCart = () => {
+    addItem({
+      product,
+      aroma: selectedAroma,
+      color: activeColor,
+      quantity,
+      notes: notes.trim() || undefined,
+      unitPrice: product.price,
+    });
+    setIsAdded(true);
+    setTimeout(() => {
+      onClose();
+      openCart();
+    }, 280);
+  };
 
   const handleWhatsAppSubmit = () => {
     const link = createProductOrderWhatsAppLink({
@@ -250,23 +269,46 @@ export const OrderModal: React.FC<OrderModalProps> = ({ product, onClose }) => {
         </div>
 
         {/* Footer Actions - Fixed at bottom */}
-        <div className="p-3.5 sm:p-5 border-t border-[#E4D9C9] bg-[#F4EFE6] flex flex-col sm:flex-row items-center justify-between gap-2.5 sm:gap-3 flex-shrink-0 rounded-b-2xl sm:rounded-b-3xl">
-          <button
-            type="button"
-            onClick={onClose}
-            className="w-full sm:w-auto px-4 py-2 sm:py-2.5 rounded-full text-xs font-semibold text-[#7A7065] hover:text-[#2D2723] transition-colors order-2 sm:order-1"
-          >
-            Volver al catálogo
-          </button>
-          
-          <button
-            type="button"
-            onClick={handleWhatsAppSubmit}
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 sm:px-6 py-3 rounded-full bg-[#0D9488] text-white text-xs sm:text-sm font-semibold hover:bg-[#0F766E] shadow-md transition-all active:scale-95 order-1 sm:order-2"
-          >
-            <MessageCircle className="w-4 h-4 fill-white flex-shrink-0" />
-            <span>Confirmar Pedido en WhatsApp</span>
-          </button>
+        <div className="p-3.5 sm:p-5 border-t border-[#E4D9C9] bg-[#F4EFE6] flex flex-col gap-2.5 flex-shrink-0 rounded-b-2xl sm:rounded-b-3xl">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-2.5 sm:gap-3">
+            <button
+              type="button"
+              onClick={onClose}
+              className="w-full sm:w-auto px-4 py-2 sm:py-2.5 rounded-full text-xs font-semibold text-[#7A7065] hover:text-[#2D2723] transition-colors order-2 sm:order-1 text-center"
+            >
+              Seguir explorando
+            </button>
+            
+            <button
+              type="button"
+              onClick={handleAddToCart}
+              disabled={isAdded}
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-[#0D9488] text-white text-xs sm:text-sm font-semibold hover:bg-[#0F766E] shadow-md hover:shadow-lg transition-all active:scale-95 order-1 sm:order-2 disabled:opacity-75"
+            >
+              {isAdded ? (
+                <>
+                  <Check className="w-4 h-4 text-white animate-in zoom-in-50" />
+                  <span>¡Agregada al carrito!</span>
+                </>
+              ) : (
+                <>
+                  <ShoppingBag className="w-4 h-4 text-white" />
+                  <span>Agregar al Carrito</span>
+                </>
+              )}
+            </button>
+          </div>
+
+          <div className="text-center pt-1 border-t border-[#E4D9C9]/60">
+            <button
+              type="button"
+              onClick={handleWhatsAppSubmit}
+              className="text-[11px] text-[#7A7065] hover:text-[#0D9488] inline-flex items-center gap-1 transition-colors"
+            >
+              <MessageCircle className="w-3.5 h-3.5 text-[#25D366] fill-[#25D366]" />
+              <span>O pedir solo esta vela directamente por WhatsApp</span>
+            </button>
+          </div>
         </div>
 
       </div>

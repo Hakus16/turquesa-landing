@@ -10,6 +10,8 @@ import { FloatingWhatsApp } from './components/layout/FloatingWhatsApp';
 import { AdminPanel } from './components/admin/AdminPanel';
 import { productService } from './services/productService';
 import type { Product } from './types/product';
+import { CartProvider } from './context/CartContext';
+import { CartDrawer } from './components/cart/CartDrawer';
 
 export const App: React.FC = () => {
   const [isAdminView, setIsAdminView] = useState<boolean>(() => {
@@ -71,23 +73,28 @@ export const App: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#FAF7F2] text-[#2D2723]">
-      {/* Fixed Navigation Header */}
-      <Navbar />
+    <CartProvider>
+      <div className="min-h-screen flex flex-col bg-[#FAF7F2] text-[#2D2723]">
+        {/* Fixed Navigation Header */}
+        <Navbar />
 
-      {/* Main Landing Sections */}
-      <main className="flex-1">
-        <HeroSection />
-        <ValueProps />
-        <CatalogSection products={products} />
-        <AromasSection />
-        <OrderSteps />
-      </main>
+        {/* Main Landing Sections */}
+        <main className="flex-1">
+          <HeroSection />
+          <ValueProps />
+          <CatalogSection products={products} />
+          <AromasSection />
+          <OrderSteps />
+        </main>
 
-      {/* Footer & WhatsApp Floating Button */}
-      <Footer onOpenAdmin={handleOpenAdmin} />
-      <FloatingWhatsApp />
-    </div>
+        {/* Footer & WhatsApp Floating Button */}
+        <Footer onOpenAdmin={handleOpenAdmin} />
+        <FloatingWhatsApp />
+
+        {/* Slide-over Shopping Cart Drawer */}
+        <CartDrawer />
+      </div>
+    </CartProvider>
   );
 };
 

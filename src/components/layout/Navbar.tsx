@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Flame, Menu, X, MessageCircle } from 'lucide-react';
+import { Flame, Menu, X, MessageCircle, ShoppingBag } from 'lucide-react';
 import { createGeneralWhatsAppLink } from '../../utils/whatsappLink';
+import { useCart } from '../../context/CartContext';
 
 export const Navbar: React.FC = () => {
+  const { totalItemsCount, openCart } = useCart();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -78,8 +80,23 @@ export const Navbar: React.FC = () => {
               ))}
             </nav>
 
-            {/* WhatsApp CTA Button (Tablet & Desktop) */}
-            <div className="hidden sm:flex items-center gap-3">
+            {/* WhatsApp CTA Button & Cart (Tablet & Desktop) */}
+            <div className="hidden sm:flex items-center gap-2.5">
+              <button
+                type="button"
+                onClick={openCart}
+                className="relative p-2.5 rounded-full text-[#2D2723] hover:text-[#0D9488] hover:bg-[#EAE2D5] transition-colors"
+                aria-label={`Abrir carrito con ${totalItemsCount} velas`}
+                title="Ver carrito de compras"
+              >
+                <ShoppingBag className="w-5 h-5" />
+                {totalItemsCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-[#0D9488] text-white text-[10px] font-bold min-w-5 h-5 px-1 rounded-full flex items-center justify-center shadow-sm animate-in zoom-in-75">
+                    {totalItemsCount}
+                  </span>
+                )}
+              </button>
+
               <a
                 href={createGeneralWhatsAppLink()}
                 target="_blank"
@@ -91,8 +108,22 @@ export const Navbar: React.FC = () => {
               </a>
             </div>
 
-            {/* Mobile Menu Toggle Button */}
-            <div className="flex md:hidden items-center">
+            {/* Mobile Actions: Cart & Menu Toggle */}
+            <div className="flex md:hidden items-center gap-1.5">
+              <button
+                type="button"
+                onClick={openCart}
+                className="relative p-2 rounded-xl text-[#2D2723] hover:bg-[#E4D9C9]/50 transition-colors"
+                aria-label={`Abrir carrito con ${totalItemsCount} velas`}
+              >
+                <ShoppingBag className="w-5 h-5" />
+                {totalItemsCount > 0 && (
+                  <span className="absolute -top-0.5 -right-0.5 bg-[#0D9488] text-white text-[10px] font-bold min-w-4 h-4 px-1 rounded-full flex items-center justify-center shadow-sm">
+                    {totalItemsCount}
+                  </span>
+                )}
+              </button>
+
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                 className="p-2 rounded-xl text-[#2D2723] hover:bg-[#E4D9C9]/50 transition-colors focus:outline-none"
@@ -107,6 +138,28 @@ export const Navbar: React.FC = () => {
         {/* Mobile Dropdown Panel */}
         {mobileMenuOpen && (
           <div className="md:hidden bg-[#FAF7F2] border-b border-[#E4D9C9] px-4 pt-2 pb-6 space-y-2 shadow-2xl animate-in slide-in-from-top-2 duration-200">
+            {/* Quick access to cart in mobile menu */}
+            <button
+              type="button"
+              onClick={() => {
+                setMobileMenuOpen(false);
+                openCart();
+              }}
+              className="w-full flex items-center justify-between px-4 py-3 text-base font-medium text-[#2D2723] hover:text-[#0D9488] hover:bg-[#F4EFE6] rounded-xl transition-colors text-left"
+            >
+              <span className="flex items-center gap-2.5">
+                <ShoppingBag className="w-5 h-5 text-[#0D9488]" />
+                <span>Mi Carrito</span>
+              </span>
+              {totalItemsCount > 0 ? (
+                <span className="bg-[#0D9488] text-white text-xs font-bold px-2.5 py-0.5 rounded-full">
+                  {totalItemsCount} {totalItemsCount === 1 ? 'vela' : 'velas'}
+                </span>
+              ) : (
+                <span className="text-xs text-[#7A7065] font-light">Vacío</span>
+              )}
+            </button>
+
             {navLinks.map((link) => (
               <a
                 key={link.href}
