@@ -35,7 +35,7 @@ export const OrderModal: React.FC<OrderModalProps> = ({ product, onClose }) => {
     window.addEventListener('keydown', handleKeyDown);
 
     return () => {
-      document.body.style.overflow = originalOverflow || 'unset';
+      document.body.style.overflow = originalOverflow || '';
       window.removeEventListener('keydown', handleKeyDown);
     };
   }, [onClose]);
@@ -80,7 +80,7 @@ export const OrderModal: React.FC<OrderModalProps> = ({ product, onClose }) => {
       }}
     >
       <div
-        className="bg-[#FAF7F2] rounded-2xl sm:rounded-3xl max-w-xl w-full border border-[#E4D9C9] shadow-2xl flex flex-col max-h-[92vh] relative animate-in fade-in zoom-in-95 duration-200"
+        className="bg-[#FAF7F2] rounded-2xl sm:rounded-3xl max-w-xl w-full border border-[#E4D9C9] shadow-2xl flex flex-col max-h-[92dvh] relative animate-in fade-in zoom-in-95 duration-200"
         role="dialog"
         aria-modal="true"
       >
@@ -108,8 +108,8 @@ export const OrderModal: React.FC<OrderModalProps> = ({ product, onClose }) => {
           </button>
         </div>
 
-        {/* Body - Scrollable content with touch smoothing */}
-        <div className="p-4 sm:p-6 space-y-5 sm:space-y-6 flex-1 overflow-y-auto [-webkit-overflow-scrolling:touch]">
+        {/* Body - Scrollable content with touch smoothing and min-h-0 */}
+        <div className="p-4 sm:p-6 space-y-5 sm:space-y-6 flex-1 min-h-0 overflow-y-auto overscroll-contain [-webkit-overflow-scrolling:touch]">
           
           {/* Selected Product Banner */}
           <div className="flex items-start sm:items-center gap-3 sm:gap-4 bg-[#F4EFE6] p-3 sm:p-3.5 rounded-2xl border border-[#E4D9C9]">

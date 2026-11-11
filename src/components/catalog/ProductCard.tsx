@@ -27,7 +27,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onOpenModal }
     });
     setIsAdded(true);
     openCart();
-    setTimeout(() => setIsAdded(false), 1200);
+    setTimeout(() => setIsAdded(false), 600);
   };
 
   return (

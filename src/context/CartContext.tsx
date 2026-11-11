@@ -54,11 +54,14 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       if (existingIndex > -1) {
         const updated = [...prev];
-        updated[existingIndex].quantity += newItem.quantity;
+        updated[existingIndex] = {
+          ...updated[existingIndex],
+          quantity: updated[existingIndex].quantity + newItem.quantity,
+        };
         return updated;
       }
 
-      const id = `${newItem.product.id}_${newItem.aroma}_${newItem.color}_${Date.now()}`;
+      const id = `${newItem.product.id}_${newItem.aroma}_${newItem.color}_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
       return [...prev, { ...newItem, id }];
     });
   };
