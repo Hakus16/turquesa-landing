@@ -111,11 +111,12 @@ export const PRODUCTS: Product[] = [
   },
   {
     id: 'postres',
-    name: 'Postres en Vaso',
+    name: 'Postres Gourmet en Vaso',
     price: 20000,
     category: 'vasos',
     image: '/images/postres.png',
     description: 'Vaso relleno de cera con cera batida decorada con corazones y tabletas de chocolate artesanales. (Sujeto a disponibilidad).',
+    badge: 'Edición Gourmet',
     inStock: true
   },
   {
