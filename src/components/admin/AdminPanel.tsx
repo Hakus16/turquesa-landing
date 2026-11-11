@@ -11,7 +11,9 @@ import {
   Database,
   CheckCircle2,
   AlertTriangle,
-  RotateCcw
+  RotateCcw,
+  Laptop,
+  ShieldAlert
 } from 'lucide-react';
 import type { Product, CategoryId } from '../../types/product';
 import { CATEGORIES } from '../../data/products';
@@ -19,6 +21,7 @@ import { productService } from '../../services/productService';
 import { isSupabaseConfigured } from '../../lib/supabase';
 import { formatCOP } from '../../utils/formatPrice';
 import { ProductFormModal } from './ProductFormModal';
+import { getDeviceInfo, revokeCurrentDevice } from '../../services/deviceAuth';
 
 interface AdminPanelProps {
   onExit: () => void;
@@ -73,9 +76,22 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onExit, onProductsChange
     }
   };
 
+  const deviceInfo = getDeviceInfo();
+
   const handleLogout = () => {
     setIsAuthenticated(false);
     sessionStorage.removeItem('turquesa_admin_logged');
+  };
+
+  const handleRevokeDevice = () => {
+    if (
+      window.confirm(
+        '¿Deseas desvincular este dispositivo? Si lo desvinculas, los 5 clics en la llama ya no abrirán el panel hasta que lo vuelvas a activar con el enlace secreto.'
+      )
+    ) {
+      revokeCurrentDevice();
+      onExit();
+    }
   };
 
   const handleSaveProduct = async (productData: Omit<Product, 'id'>, imageFile?: File) => {
@@ -201,7 +217,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onExit, onProductsChange
               <div className="font-serif text-lg sm:text-xl font-bold uppercase tracking-wider text-[#2D2723]">
                 Turquesa Admin
               </div>
-              <div className="flex items-center gap-1.5 text-[10px]">
+              <div className="flex flex-wrap items-center gap-1.5 text-[10px]">
                 {isSupabaseConfigured ? (
                   <span className="inline-flex items-center gap-1 text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full font-medium">
                     <Database className="w-3 h-3" /> Supabase Activo
@@ -209,6 +225,14 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onExit, onProductsChange
                 ) : (
                   <span className="inline-flex items-center gap-1 text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full font-medium">
                     <CheckCircle2 className="w-3 h-3" /> Modo Local (Listo para Supabase)
+                  </span>
+                )}
+                {deviceInfo && (
+                  <span
+                    className="inline-flex items-center gap-1 text-[#0D9488] bg-[#0D9488]/10 px-2 py-0.5 rounded-full font-medium"
+                    title={`Dispositivo autorizado: ${deviceInfo.deviceName}`}
+                  >
+                    <Laptop className="w-3 h-3" /> {deviceInfo.deviceName}
                   </span>
                 )}
               </div>
@@ -233,6 +257,14 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onExit, onProductsChange
             >
               <Plus className="w-4 h-4" />
               <span>Nuevo Producto</span>
+            </button>
+
+            <button
+              onClick={handleRevokeDevice}
+              className="p-2 rounded-full text-[#7A7065] hover:text-amber-700 hover:bg-amber-50 transition-colors"
+              title="Desvincular este dispositivo"
+            >
+              <ShieldAlert className="w-4 h-4" />
             </button>
 
             <button

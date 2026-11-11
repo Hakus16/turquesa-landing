@@ -8,16 +8,34 @@ import { OrderSteps } from './components/home/OrderSteps';
 import { Footer } from './components/layout/Footer';
 import { FloatingWhatsApp } from './components/layout/FloatingWhatsApp';
 import { AdminPanel } from './components/admin/AdminPanel';
+import { DeviceActivationModal } from './components/admin/DeviceActivationModal';
 import { productService } from './services/productService';
+import { isDeviceAuthorized } from './services/deviceAuth';
 import type { Product } from './types/product';
 import { CartProvider } from './context/CartContext';
 import { CartDrawer } from './components/cart/CartDrawer';
 
 export const App: React.FC = () => {
-  const [isAdminView, setIsAdminView] = useState<boolean>(() => {
-    return (
+  const checkAdminAccess = (): boolean => {
+    const isTargetingAdmin =
       window.location.pathname === '/admin' ||
-      window.location.hash === '#admin'
+      window.location.hash === '#admin';
+
+    // Must be on an authorized trusted device
+    if (isTargetingAdmin && !isDeviceAuthorized()) {
+      if (window.location.hash === '#admin') {
+        window.history.replaceState(null, '', window.location.pathname + window.location.search);
+      }
+      return false;
+    }
+    return isTargetingAdmin && isDeviceAuthorized();
+  };
+
+  const [isAdminView, setIsAdminView] = useState<boolean>(() => checkAdminAccess());
+  const [isActivatingDevice, setIsActivatingDevice] = useState<boolean>(() => {
+    return (
+      window.location.hash === '#activar-dispositivo' ||
+      window.location.hash.startsWith('#admin-activate')
     );
   });
 
@@ -36,10 +54,12 @@ export const App: React.FC = () => {
     loadAllProducts();
 
     const handleHashChange = () => {
-      const isNowAdmin =
-        window.location.pathname === '/admin' ||
-        window.location.hash === '#admin';
-      setIsAdminView(isNowAdmin);
+      const isActivation =
+        window.location.hash === '#activar-dispositivo' ||
+        window.location.hash.startsWith('#admin-activate');
+      setIsActivatingDevice(isActivation);
+
+      setIsAdminView(checkAdminAccess());
     };
 
     window.addEventListener('hashchange', handleHashChange);
@@ -51,14 +71,9 @@ export const App: React.FC = () => {
     };
   }, []);
 
-  const handleOpenAdmin = () => {
-    window.location.hash = '#admin';
-    setIsAdminView(true);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
   const handleExitAdmin = () => {
     window.location.hash = '';
+    window.history.replaceState(null, '', window.location.pathname + window.location.search);
     setIsAdminView(false);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -87,12 +102,28 @@ export const App: React.FC = () => {
           <OrderSteps />
         </main>
 
-        {/* Footer & WhatsApp Floating Button */}
-        <Footer onOpenAdmin={handleOpenAdmin} />
+        {/* Footer (without any visible admin buttons) & Floating Actions */}
+        <Footer />
         <FloatingWhatsApp />
 
         {/* Slide-over Shopping Cart Drawer */}
         <CartDrawer />
+
+        {/* Device Activation Modal (Only shown via secret #activar-dispositivo link) */}
+        {isActivatingDevice && (
+          <DeviceActivationModal
+            onSuccess={() => {
+              window.history.replaceState(null, '', window.location.pathname + window.location.search);
+              setIsActivatingDevice(false);
+              window.location.hash = '#admin';
+              setIsAdminView(true);
+            }}
+            onCancel={() => {
+              window.history.replaceState(null, '', window.location.pathname + window.location.search);
+              setIsActivatingDevice(false);
+            }}
+          />
+        )}
       </div>
     </CartProvider>
   );

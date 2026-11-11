@@ -1,13 +1,9 @@
 import React from 'react';
-import { Flame, Phone, MapPin, Heart, ShieldCheck, Truck, Lock } from 'lucide-react';
+import { Flame, Phone, MapPin, Heart, ShieldCheck, Truck } from 'lucide-react';
 import { BRAND_INFO } from '../../data/orderSteps';
 import { createGeneralWhatsAppLink } from '../../utils/whatsappLink';
 
-interface FooterProps {
-  onOpenAdmin?: () => void;
-}
-
-export const Footer: React.FC<FooterProps> = ({ onOpenAdmin }) => {
+export const Footer: React.FC = () => {
   return (
     <footer id="contacto" className="bg-[#26211E] text-[#EBE6DF] pt-12 sm:pt-16 pb-8 sm:pb-12 border-t border-[#3D3530]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -103,19 +99,9 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin }) => {
         <div className="pt-6 sm:pt-8 flex flex-col sm:flex-row items-center justify-between text-[11px] sm:text-xs text-[#8A8177] gap-3 text-center sm:text-left">
           <p>© {new Date().getFullYear()} Turquesa. Todos los derechos reservados. Decora tus espacios.</p>
           
-          <div className="flex items-center gap-4">
-            <p className="flex items-center justify-center gap-1.5">
-              Creado con <Heart className="w-3.5 h-3.5 text-rose-400 fill-rose-400 inline flex-shrink-0" /> para los amantes de las velas
-            </p>
-            <span>•</span>
-            <button
-              onClick={onOpenAdmin || (() => { window.location.hash = '#admin'; })}
-              className="inline-flex items-center gap-1 text-[#8A8177] hover:text-[#2DD4BF] transition-colors"
-            >
-              <Lock className="w-3 h-3" />
-              <span>Acceso Administrador</span>
-            </button>
-          </div>
+          <p className="flex items-center justify-center gap-1.5">
+            Creado con <Heart className="w-3.5 h-3.5 text-rose-400 fill-rose-400 inline flex-shrink-0" /> para los amantes de las velas
+          </p>
         </div>
       </div>
     </footer>

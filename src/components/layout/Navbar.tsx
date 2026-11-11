@@ -1,12 +1,37 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Flame, Menu, X, MessageCircle, ShoppingBag } from 'lucide-react';
 import { createGeneralWhatsAppLink } from '../../utils/whatsappLink';
 import { useCart } from '../../context/CartContext';
+import { isDeviceAuthorized } from '../../services/deviceAuth';
 
 export const Navbar: React.FC = () => {
   const { totalItemsCount, openCart } = useCart();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const flameClicksRef = useRef<number>(0);
+  const lastFlameClickRef = useRef<number>(0);
+
+  const handleLogoClick = (e: React.MouseEvent) => {
+    const now = Date.now();
+    // Reset click count if more than 2.5 seconds have passed
+    if (now - lastFlameClickRef.current > 2500) {
+      flameClicksRef.current = 1;
+    } else {
+      flameClicksRef.current += 1;
+      // 5 quick clicks on the flame logo trigger admin verification
+      if (flameClicksRef.current >= 5) {
+        flameClicksRef.current = 0;
+        if (isDeviceAuthorized()) {
+          e.preventDefault();
+          window.location.hash = '#admin';
+          return;
+        }
+      }
+    }
+    lastFlameClickRef.current = now;
+    setMobileMenuOpen(false);
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -51,7 +76,7 @@ export const Navbar: React.FC = () => {
             {/* Logo */}
             <a
               href="#inicio"
-              onClick={() => setMobileMenuOpen(false)}
+              onClick={handleLogoClick}
               className="flex items-center gap-2 sm:gap-2.5 group"
             >
               <span className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-[#0D9488]/10 text-[#0D9488] flex items-center justify-center group-hover:bg-[#0D9488] group-hover:text-white transition-all duration-300 flex-shrink-0">
