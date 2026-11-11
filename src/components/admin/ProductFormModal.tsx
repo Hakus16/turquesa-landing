@@ -94,7 +94,7 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
           price: Number(price),
           category,
           image: imagePreview,
-          badge: badge.trim() || undefined,
+          badge: badge.trim(),
           description: description.trim() || undefined,
           inStock,
         },

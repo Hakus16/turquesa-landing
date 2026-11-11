@@ -57,12 +57,12 @@ export const productService = {
           return data.map((item) => ({
             id: item.id,
             name: item.name,
-            size: item.size || undefined,
+            size: item.size?.trim() || undefined,
             price: Number(item.price),
             category: item.category,
             image: item.image,
-            description: item.description || undefined,
-            badge: item.badge || undefined,
+            description: item.description?.trim() || undefined,
+            badge: item.badge?.trim() || undefined,
             inStock: item.in_stock ?? true,
           }));
         }
@@ -123,6 +123,10 @@ export const productService = {
       ...newProduct,
       id: generatedId,
       image: imageUrl,
+      name: newProduct.name.trim(),
+      size: newProduct.size?.trim() || undefined,
+      description: newProduct.description?.trim() || undefined,
+      badge: newProduct.badge?.trim() || undefined,
       inStock: newProduct.inStock ?? true,
     };
 
@@ -174,13 +178,13 @@ export const productService = {
     if (isSupabaseConfigured && supabase) {
       try {
         const dbUpdates: Record<string, unknown> = {};
-        if (finalUpdates.name !== undefined) dbUpdates.name = finalUpdates.name;
-        if (finalUpdates.size !== undefined) dbUpdates.size = finalUpdates.size || null;
-        if (finalUpdates.price !== undefined) dbUpdates.price = finalUpdates.price;
+        if (finalUpdates.name !== undefined) dbUpdates.name = finalUpdates.name.trim();
+        if ('size' in finalUpdates) dbUpdates.size = finalUpdates.size?.trim() || null;
+        if (finalUpdates.price !== undefined) dbUpdates.price = Number(finalUpdates.price);
         if (finalUpdates.category !== undefined) dbUpdates.category = finalUpdates.category;
         if (finalUpdates.image !== undefined) dbUpdates.image = finalUpdates.image;
-        if (finalUpdates.description !== undefined) dbUpdates.description = finalUpdates.description || null;
-        if (finalUpdates.badge !== undefined) dbUpdates.badge = finalUpdates.badge || null;
+        if ('description' in finalUpdates) dbUpdates.description = finalUpdates.description?.trim() || null;
+        if ('badge' in finalUpdates) dbUpdates.badge = finalUpdates.badge?.trim() || null;
         if (finalUpdates.inStock !== undefined) dbUpdates.in_stock = finalUpdates.inStock;
 
         const { error } = await supabase
@@ -198,7 +202,22 @@ export const productService = {
 
     // Update local storage
     const current = getStoredLocalProducts();
-    const updated = current.map((p) => (p.id === id ? { ...p, ...finalUpdates } : p));
+    const updated = current.map((p) => {
+      if (p.id !== id) return p;
+      const merged: Product = { ...p, ...finalUpdates };
+      if (!finalUpdates.badge?.trim()) {
+        delete merged.badge;
+      } else {
+        merged.badge = finalUpdates.badge.trim();
+      }
+      if (!finalUpdates.size?.trim()) {
+        delete merged.size;
+      }
+      if (!finalUpdates.description?.trim()) {
+        delete merged.description;
+      }
+      return merged;
+    });
     saveLocalProducts(updated);
 
     const found = updated.find((p) => p.id === id);

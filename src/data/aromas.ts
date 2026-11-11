@@ -12,7 +12,7 @@ export const AROMAS: Aroma[] = [
   {
     id: 'lavanda',
     name: 'Lavanda',
-    description: 'Aroma floral aromático con propiedades calmantes ideales para el descanso y la meditación nocturna.',
+    description: 'Aroma floral aromático  ideales para el descanso y la meditación nocturna.',
     intensity: 'Media',
     mood: 'Paz & Desconexión',
     badgeBg: 'bg-purple-100 text-purple-800 border-purple-200'
@@ -36,7 +36,7 @@ export const AROMAS: Aroma[] = [
   {
     id: 'cafe',
     name: 'Café',
-    description: 'Grano de café tostado recién molido con fondo amaderado. El abrazo perfecto para tardes lluviosas.',
+    description: 'El abrazo perfecto para tardes lluviosas.',
     intensity: 'Media',
     mood: 'Acogedor & Confort',
     badgeBg: 'bg-stone-200 text-stone-800 border-stone-300'
@@ -44,7 +44,7 @@ export const AROMAS: Aroma[] = [
   {
     id: 'fresas-chocolate',
     name: 'Fresas con chocolate',
-    description: 'Combinación gourmand indulgente de frutos rojos dulces y cacao cremoso. Un capricho sensorial.',
+    description: 'Combinación de frutos rojos dulces y cacao cremoso. Un capricho sensorial.',
     intensity: 'Media',
     mood: 'Romance & Dulzura',
     badgeBg: 'bg-rose-100 text-rose-800 border-rose-200'
@@ -52,7 +52,7 @@ export const AROMAS: Aroma[] = [
   {
     id: 'eucalipto',
     name: 'Eucalipto',
-    description: 'Sensación botánica balsámica que abre las vías respiratorias y renueva el aire con frescor verde.',
+    description: 'Sensación botánica que abre las vías respiratorias y renueva el aire con frescor verde.',
     intensity: 'Suave',
     mood: 'Claridad & Bienestar',
     badgeBg: 'bg-emerald-100 text-emerald-800 border-emerald-200'
